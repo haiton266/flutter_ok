@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/login/views/LoginPage.dart';
-import 'package:flutter_application_1/navigation/ui/pages/content_page.dart';
+import 'package:flutter_application_1/navigation/content_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {

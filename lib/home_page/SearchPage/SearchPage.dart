@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'CommentPage.dart';
+import '../CommentPage/CommentPage.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -13,7 +13,8 @@ class _SearchPageState extends State<SearchPage> {
   List<dynamic> _data = []; // List để lưu trữ dữ liệu từ API
 
   Future<void> fetchData() async {
-    var response = await http.get(Uri.parse('https://haiton26062.pythonanywhere.com/image/all'));
+    var response = await http
+        .get(Uri.parse('https://haiton26062.pythonanywhere.com/image/all'));
     if (response.statusCode == 200) {
       setState(() {
         _data = jsonDecode(response.body);
@@ -26,8 +27,10 @@ class _SearchPageState extends State<SearchPage> {
     super.initState();
     fetchData(); // Gọi hàm để lấy dữ liệu từ API khi trang được tạo
   }
+
   String removeDiacritics(String input) {
-    return input.replaceAll(RegExp(r'[àáạảãâầấậẩẫăằắặẳẵ]'), 'a')
+    return input
+        .replaceAll(RegExp(r'[àáạảãâầấậẩẫăằắặẳẵ]'), 'a')
         .replaceAll(RegExp(r'[èéẹẻẽêềếệểễ]'), 'e')
         .replaceAll(RegExp(r'[ìíịỉĩ]'), 'i')
         .replaceAll(RegExp(r'[òóọỏõôồốộổỗơờớợởỡ]'), 'o')
@@ -47,11 +50,11 @@ class _SearchPageState extends State<SearchPage> {
     String formattedQuery = removeDiacritics(query.toLowerCase());
 
     return _data.where((item) {
-      String formattedName = removeDiacritics(item['name'].toString().toLowerCase());
+      String formattedName =
+          removeDiacritics(item['name'].toString().toLowerCase());
       return formattedName.contains(formattedQuery);
     }).toList();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -78,11 +81,14 @@ class _SearchPageState extends State<SearchPage> {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: _searchController.text.isEmpty ? _data.length : _searchResults(_searchController.text).length,
+                itemCount: _searchController.text.isEmpty
+                    ? _data.length
+                    : _searchResults(_searchController.text).length,
                 itemBuilder: (context, index) {
-                  final List<dynamic> searchData = _searchController.text.isEmpty
-                      ? _data
-                      : _searchResults(_searchController.text);
+                  final List<dynamic> searchData =
+                      _searchController.text.isEmpty
+                          ? _data
+                          : _searchResults(_searchController.text);
                   return GestureDetector(
                     onTap: () {
                       Navigator.push(

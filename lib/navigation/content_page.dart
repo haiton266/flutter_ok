@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/home_page/home_view/AddPdfViewer.dart';
+import 'package:flutter_application_1/home_page/AddPdf/AddPdfViewer.dart';
+import 'package:flutter_application_1/home_page/Profile/view/Profile_view.dart';
 import 'package:flutter_application_1/home_page/home_view/HomePage.dart';
-import 'package:flutter_application_1/home_page/home_view/Profile.dart';
-import 'package:flutter_application_1/home_page/home_view/SearchPage.dart';
+import 'package:flutter_application_1/home_page/Profile/Profile.dart';
+import 'package:flutter_application_1/home_page/SearchPage/SearchPage.dart';
 
 class ContentPage extends StatefulWidget {
   const ContentPage({Key? key}) : super(key: key);
@@ -18,6 +19,7 @@ class _ContentPageState extends State<ContentPage> {
     HomePage(),
     SearchPage(),
     Profile(),
+    // ProfileView(),
     AddPdfViewer(),
   ];
 

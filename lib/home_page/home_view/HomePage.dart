@@ -1,33 +1,28 @@
 import 'package:flutter/material.dart';
-// import 'package:login_test/Profile.dart';
-import 'Subject.dart';
-
+import 'package:get/get.dart';
+import '../Subject/Subject.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomePage extends StatefulWidget {
-  Widget build(BuildContext context) {
-    return const Center(child: Text("Home"));
-  }
+class HomeController extends GetxController {
+  final username = ''.obs;
 
   @override
-  _HomePageState createState() => _HomePageState();
+  void onInit() {
+    getUsernameFromPrefs();
+    super.onInit();
+  }
+
+  Future<void> getUsernameFromPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userName = prefs.getString('username') ?? '';
+    username.value = userName;
+  }
 }
 
-class _HomePageState extends State<HomePage> {
-  late Future<String> username;
+class HomePage extends StatelessWidget {
+  final HomeController controller = Get.put(HomeController());
 
-  @override
-  void initState() {
-    super.initState();
-    username = getUsername();
-  }
-
-  Future<String> getUsername() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('username') ?? '';
-  }
-
-  final Sbj = [
+  final List<Map<String, String>> subjects = [
     {
       'code': 'giaitich',
       'text': 'Giải tích',
@@ -46,135 +41,106 @@ class _HomePageState extends State<HomePage> {
       'image': 'assets/images/vienthong.png'
     },
     {'code': 'nhung', 'text': 'Nhúng', 'image': 'assets/images/nhung.png'}
+    // Add other subjects here
   ];
-
-  // int _currentIndex = 0;
-
-  // final List<Widget> _destinations = [
-  //   HomePage(),
-  //   AddPdfViewer(),
-  //   Profile(),
-  // ];
-
-  Future<String> getUsernameFromPrefs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String userName = prefs.getString('username') ?? '';
-    setState(() {
-      username = Future.value(userName);
-    });
-    return userName;
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<String>(
-        future: username,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            return buildHomePage(snapshot.data);
-          }
-        },
-      ),
-    );
-  }
-
-  Widget buildHomePage(String? username) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.fromLTRB(10, 25, 10, 10),
-          child: Stack(
-            children: <Widget>[
-              Image.asset('assets/images/hello.png'),
-              Positioned(
-                top: 45,
-                left: 20,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // ignore: prefer_const_constructors
-                    Text(
-                      'Hello',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      username ?? '',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
+      body: Center(
+        child: Column(
+          children: [
+            Obx(() {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(10, 25, 10, 10),
+                child: Stack(
+                  children: <Widget>[
+                    Image.asset('assets/images/hello.png'),
+                    Positioned(
+                      top: 45,
+                      left: 20,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Hello',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            controller.username.value,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
+              );
+            }),
+            const Text(
+              "Các môn hiện có",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
               ),
-            ],
-          ),
-        ),
-        const Text(
-          "Các môn hiện có",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        SizedBox(height: 10),
-        Expanded(
-          child: GridView.count(
-            padding: const EdgeInsets.all(10),
-            crossAxisCount: 2,
-            children: List.generate(Sbj.length, (index) {
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Subject(
-                        Sbj[index]['code']!,
-                        Sbj[index]['text']!,
-                        Sbj[index]['image']!,
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: GridView.count(
+                padding: const EdgeInsets.all(10),
+                crossAxisCount: 2,
+                children: List.generate(subjects.length, (index) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Subject(
+                            subjects[index]['code']!,
+                            subjects[index]['text']!,
+                            subjects[index]['image']!,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.all(5.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16.0),
+                        color: Colors.white,
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          Image.asset(
+                            subjects[index]['image']!,
+                            height: 115,
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            subjects[index]['text']!,
+                            style: const TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   );
-                },
-                child: Container(
-                  margin: EdgeInsets.all(5.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16.0),
-                    color: Colors.white,
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Image.asset(
-                        Sbj[index]['image']!,
-                        height: 115,
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        Sbj[index]['text']!,
-                        style: const TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }),
-          ),
+                }),
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
-// Other methods...
 }

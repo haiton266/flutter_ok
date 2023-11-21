@@ -1,10 +1,7 @@
-// ignore_for_file: unnecessary_null_comparison
-
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'CommentPage.dart';
+import '../CommentPage/CommentPage.dart';
 
 class manageFile extends StatefulWidget {
   final files;
@@ -23,6 +20,7 @@ class _manageFileState extends State<manageFile> {
     super.initState();
     // fetchData(); // Gọi hàm lấy dữ liệu khi trang được tạo
   }
+
   Future<void> handleDelete(int id, int index) async {
     String url = 'https://haiton26062.pythonanywhere.com/image/delete/$id';
 
@@ -57,7 +55,7 @@ class _manageFileState extends State<manageFile> {
         centerTitle: true, // Đặt tiêu đề căn giữa
         elevation: 0, // Đặt độ nâng của AppBar là 0 để xóa gạch ngang phân cách
         iconTheme:
-        IconThemeData(color: Colors.black), // Đặt màu của icon là đen
+            IconThemeData(color: Colors.black), // Đặt màu của icon là đen
       ),
       body: Column(
         children: [
@@ -79,8 +77,7 @@ class _manageFileState extends State<manageFile> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              CommentPage(files[index]['id']),
+                          builder: (context) => CommentPage(files[index]['id']),
                         ),
                       );
                     },
@@ -125,11 +122,11 @@ class _manageFileState extends State<manageFile> {
                           IconButton(
                             icon: Icon(Icons.delete),
                             onPressed: () async {
-                              await handleDelete(files[index]['id'], index); // Truyền index vào hàm handleDelete
+                              await handleDelete(files[index]['id'],
+                                  index); // Truyền index vào hàm handleDelete
                             },
                             tooltip: 'Delete',
                           ),
-
                         ],
                       ),
                     ),
