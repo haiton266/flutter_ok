@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddPdfViewer extends StatefulWidget {
   @override
@@ -20,6 +21,7 @@ class _AddPdfViewerState extends State<AddPdfViewer> {
   String _selectedSchool = "BKDN";
 
   Future<void> _uploadPdf(File? file) async {
+    final prefs = await SharedPreferences.getInstance();
     if (file != null) {
       final url = Uri.parse('https://haiton26062.pythonanywhere.com/image/add');
       final request = http.MultipartRequest('POST', url);
@@ -27,7 +29,7 @@ class _AddPdfViewerState extends State<AddPdfViewer> {
       request.fields['school'] = _selectedSchool;
       request.fields['name'] = _pdfName;
       request.fields['type'] = _selectedSubject;
-
+      request.fields['username'] = prefs.getString('username') ?? '';
       try {
         final streamedResponse = await request.send();
         if (streamedResponse.statusCode == 200) {

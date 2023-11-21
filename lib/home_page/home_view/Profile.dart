@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 import 'ChangePasswordModal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.purple[50], // Màu tím nhạt
+      color: Colors.purple[50],
       child: Stack(
-          alignment: Alignment.center,
-          children: <Widget>[
-            ProfileState(),
-            Positioned(
-              top: 70,
-              child: CircleAvatar(
-                radius: 50, // Đường kính của ảnh đại diện
-                backgroundImage: AssetImage('assets/images/anh3.jpg'), // Đường dẫn đến ảnh đại diện
-              ),
+        alignment: Alignment.center,
+        children: <Widget>[
+          ProfileState(),
+          Positioned(
+            top: 70,
+            child: CircleAvatar(
+              radius: 50,
+              backgroundImage: AssetImage('assets/images/anh3.jpg'),
             ),
-          ]
+          ),
+        ],
       ),
     );
   }
@@ -30,10 +32,12 @@ class ProfileState extends StatefulWidget {
 }
 
 class _ProfileState extends State<ProfileState> {
+  bool isLoading = true; // Thêm biến isLoading vào _ProfileState
   String email = '';
   String phoneNumber = '';
   String username = '';
   String address = '';
+  String uploadedFiles = '';
 
   Future<void> fetchUserData() async {
     final prefs = await SharedPreferences.getInstance();
@@ -43,6 +47,22 @@ class _ProfileState extends State<ProfileState> {
       username = prefs.getString('username') ?? '';
       address = prefs.getString('address') ?? '';
     });
+
+    final response = await http.get(Uri.parse('https://haiton26062.pythonanywhere.com/image/all'));
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      var filteredList = data.where((x) => x['username'] == prefs.getString('username')).toList();
+      setState(() {
+        uploadedFiles = 'Đã upload ${filteredList.length} files';
+        isLoading = false; // Khi dữ liệu đã được tải hoàn tất, isLoading = false
+      });
+    } else {
+      print('Error GET');
+      setState(() {
+        isLoading = false; // Khi gặp lỗi, isLoading = false để ngừng hiển thị quay tròn chờ loading
+      });
+    }
   }
 
   void _logout(BuildContext context) async {
@@ -89,22 +109,30 @@ class _ProfileState extends State<ProfileState> {
     );
   }
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   fetchUserData();
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.purple[100],
       body: Center(
-        child: Container(
+        child: isLoading
+            ? CircularProgressIndicator() // Hiển thị quay tròn chờ loading nếu đang tải dữ liệu
+            : Container(
           height: 376.0,
-          width: 300.0, // Thêm chấm động sau số để chỉ ra đây là kiểu double
-          padding: EdgeInsets.all(41.0),
+          width: 300.0,
+          padding: EdgeInsets.fromLTRB(41, 41, 41, 25),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.0),
             color: Colors.white,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center, // Sửa thành CrossAxisAlignment.center để canh giữa
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Center(
                 child: Column(
@@ -113,15 +141,15 @@ class _ProfileState extends State<ProfileState> {
                       '$username',
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 25.0, // Thêm chấm động sau số để chỉ ra đây là kiểu double
+                        fontSize: 25.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text('Đã upload 120 files'),
+                    Text(uploadedFiles),
                   ],
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               Container(
                 height: 41,
                 width: 200,
@@ -138,7 +166,7 @@ class _ProfileState extends State<ProfileState> {
                   ]
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               Container(
                 height: 41,
                 width: 200,
@@ -155,7 +183,7 @@ class _ProfileState extends State<ProfileState> {
                     ]
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               Container(
                 height: 41,
                 width: 200,
@@ -172,7 +200,7 @@ class _ProfileState extends State<ProfileState> {
                     ]
                 ),
               ),
-              SizedBox(height: 18),
+              SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -226,6 +254,30 @@ class _ProfileState extends State<ProfileState> {
                     ),
                   ),
                 ],
+              ),
+              Center(
+                child: ElevatedButton(
+                onPressed: () {
+                  // _showLogoutConfirmation(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    side:
+                    BorderSide(color: Colors.purple, width: 2.0),
+                  ),
+                  primary: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  minimumSize: Size(35.0, 25.0),
+                ),
+                child: Text(
+                  'Quản lý file của bạn',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ),
               ),
             ],
           ),
