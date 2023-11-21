@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/home_page/home_view/AddPdfViewer.dart';
 import 'package:flutter_application_1/home_page/home_view/HomePage.dart';
 import 'package:flutter_application_1/home_page/home_view/Profile.dart';
+import 'package:flutter_application_1/home_page/home_view/SearchPage.dart';
 
 class ContentPage extends StatefulWidget {
   const ContentPage({Key? key}) : super(key: key);
@@ -15,6 +16,7 @@ class _ContentPageState extends State<ContentPage> {
 
   static final List<Widget> _widgetOptions = <Widget>[
     HomePage(),
+    SearchPage(),
     Profile(),
     AddPdfViewer(),
   ];
@@ -35,15 +37,19 @@ class _ContentPageState extends State<ContentPage> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Home',
+            label: 'Trang chủ',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Tìm kiếm',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Profile',
+            label: 'Cá nhân',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add),
-            label: 'Add',
+            label: 'Thêm file',
           ),
         ],
         currentIndex: _selectedIndex,

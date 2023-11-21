@@ -242,6 +242,9 @@ class _AddPdfViewerState extends State<AddPdfViewer> {
                           print('No PDF selected');
                         }
                       },
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.purple, // Đây là nơi bạn đặt màu cho nút (màu tím là Colors.purple)
+                      ),
                       child: Text('Upload PDF'),
                     ),
                   ],

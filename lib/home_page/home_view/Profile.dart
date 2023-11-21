@@ -3,7 +3,7 @@ import 'ChangePasswordModal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import 'manageFile.dart';
 class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -14,10 +14,16 @@ class Profile extends StatelessWidget {
         children: <Widget>[
           ProfileState(),
           Positioned(
-            top: 70,
-            child: CircleAvatar(
-              radius: 50,
-              backgroundImage: AssetImage('assets/images/anh3.jpg'),
+            top: 110,
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.purple, width: 4), // Thêm viền màu tím
+                shape: BoxShape.circle,
+              ),
+              child: CircleAvatar(
+                radius: 60, // Tăng kích thước của ảnh
+                backgroundImage: AssetImage('assets/images/anhdangnhap.jpg'),
+              ),
             ),
           ),
         ],
@@ -38,6 +44,7 @@ class _ProfileState extends State<ProfileState> {
   String username = '';
   String address = '';
   String uploadedFiles = '';
+  var manageList = [];
 
   Future<void> fetchUserData() async {
     final prefs = await SharedPreferences.getInstance();
@@ -56,6 +63,7 @@ class _ProfileState extends State<ProfileState> {
       setState(() {
         uploadedFiles = 'Đã upload ${filteredList.length} files';
         isLoading = false; // Khi dữ liệu đã được tải hoàn tất, isLoading = false
+        manageList = filteredList;
       });
     } else {
       print('Error GET');
@@ -123,7 +131,7 @@ class _ProfileState extends State<ProfileState> {
         child: isLoading
             ? CircularProgressIndicator() // Hiển thị quay tròn chờ loading nếu đang tải dữ liệu
             : Container(
-          height: 376.0,
+          height: 450.0,
           width: 300.0,
           padding: EdgeInsets.fromLTRB(41, 41, 41, 25),
           decoration: BoxDecoration(
@@ -255,11 +263,16 @@ class _ProfileState extends State<ProfileState> {
                   ),
                 ],
               ),
+              SizedBox(height: 0),
               Center(
                 child: ElevatedButton(
-                onPressed: () {
-                  // _showLogoutConfirmation(context);
-                },
+                  onPressed: () {
+                    // Chuyển sang trang manageFile khi nút được nhấn
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => manageFile(manageList)), // Thay 'ManageFilePage' bằng tên trang bạn muốn chuyển đến
+                    );
+                  },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0),
