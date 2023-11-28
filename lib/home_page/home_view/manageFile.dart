@@ -1,7 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison
 
-import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/home_page/home_view/Alert.dart';
 import 'package:http/http.dart' as http;
 
 import 'CommentPage.dart';
@@ -23,6 +23,7 @@ class _manageFileState extends State<manageFile> {
     super.initState();
     // fetchData(); // Gọi hàm lấy dữ liệu khi trang được tạo
   }
+
   Future<void> handleDelete(int id, int index) async {
     String url = 'https://haiton26062.pythonanywhere.com/image/delete/$id';
 
@@ -30,14 +31,29 @@ class _manageFileState extends State<manageFile> {
       var response = await http.delete(Uri.parse(url));
       if (response.statusCode == 200) {
         setState(() {
-          files.removeAt(index); // Xóa tệp khỏi danh sách khi xóa thành công
+          files.removeAt(index); // Xóa file khỏi danh sách
         });
-        print('Xóa thành công');
+        showNotificationDialog(
+          context,
+          title: "Thành công",
+          message: "File đã được xóa thành công!",
+          isSuccess: true,
+        );
       } else {
-        print('Lỗi khi xóa: ${response.statusCode}');
+        showNotificationDialog(
+          context,
+          title: "Lỗi",
+          message: "Lỗi khi xóa file: ${response.statusCode}",
+          isSuccess: false,
+        );
       }
     } catch (error) {
-      print('Lỗi khi thực hiện yêu cầu: $error');
+      showNotificationDialog(
+        context,
+        title: "Lỗi",
+        message: "Lỗi khi thực hiện yêu cầu: $error",
+        isSuccess: false,
+      );
     }
   }
 
@@ -57,7 +73,7 @@ class _manageFileState extends State<manageFile> {
         centerTitle: true, // Đặt tiêu đề căn giữa
         elevation: 0, // Đặt độ nâng của AppBar là 0 để xóa gạch ngang phân cách
         iconTheme:
-        IconThemeData(color: Colors.black), // Đặt màu của icon là đen
+            IconThemeData(color: Colors.black), // Đặt màu của icon là đen
       ),
       body: Column(
         children: [
@@ -79,8 +95,7 @@ class _manageFileState extends State<manageFile> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              CommentPage(files[index]['id']),
+                          builder: (context) => CommentPage(files[index]['id']),
                         ),
                       );
                     },
@@ -125,11 +140,11 @@ class _manageFileState extends State<manageFile> {
                           IconButton(
                             icon: Icon(Icons.delete),
                             onPressed: () async {
-                              await handleDelete(files[index]['id'], index); // Truyền index vào hàm handleDelete
+                              await handleDelete(files[index]['id'],
+                                  index); // Truyền index vào hàm handleDelete
                             },
                             tooltip: 'Delete',
                           ),
-
                         ],
                       ),
                     ),

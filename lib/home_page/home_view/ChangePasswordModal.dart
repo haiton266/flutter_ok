@@ -15,7 +15,7 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Change Password'),
+      title: Text('Thay đổi mật khẩu'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -26,7 +26,7 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
               });
             },
             decoration: InputDecoration(
-              labelText: 'New Password',
+              labelText: 'Mật khẩu mới',
             ),
             obscureText: true,
           ),
@@ -37,7 +37,7 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
               });
             },
             decoration: InputDecoration(
-              labelText: 'Confirm New Password',
+              labelText: 'Nhập lại mật khẩu mới',
             ),
             obscureText: true,
           ),
@@ -48,8 +48,10 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
           onPressed: () {
             if (newPassword == confirmPassword) {
               // Gửi yêu cầu PUT HTTP để thay đổi mật khẩu
-              updatePassword(newPassword); // Gọi hàm updatePassword với mật khẩu mới
-              Navigator.pop(context); // Đóng modal sau khi gửi yêu cầu thành công
+              updatePassword(
+                  newPassword); // Gọi hàm updatePassword với mật khẩu mới
+              Navigator.pop(
+                  context); // Đóng modal sau khi gửi yêu cầu thành công
             } else {
               // Hiển thị thông báo nếu hai mật khẩu không khớp
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -58,13 +60,13 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
               ));
             }
           },
-          child: Text('Change'),
+          child: Text('Thay đổi'),
         ),
         TextButton(
           onPressed: () {
             Navigator.pop(context); // Đóng modal nếu người dùng bấm Cancel
           },
-          child: Text('Cancel'),
+          child: Text('Hủy'),
         ),
       ],
     );
@@ -75,7 +77,7 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
     final prefs = await SharedPreferences.getInstance();
     final id_get = prefs.getString('id');
     final response = await http.put(
-      Uri.https('haiton26062.pythonanywhere.com', '/user/3'),
+      Uri.https('haiton26062.pythonanywhere.com', '/user/{$id_get}/}'),
       body: jsonEncode({'password': newPassword}),
       headers: {'Content-Type': 'application/json'},
     );

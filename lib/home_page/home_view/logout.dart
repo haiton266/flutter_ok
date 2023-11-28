@@ -21,22 +21,22 @@ class Logout extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirm Logout'),
-          content: Text('Are you sure you want to logout?'),
+          title: Text('Xác nhận đăng xuất'),
+          content: Text('Bạn có chắc chắn muốn đăng xuất?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
                 _logout(context); // Perform logout
               },
-              child: Text('Logout'),
+              child: Text('Đăng xuất'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
                 Navigator.pop(context); // Go back to HomePage
               },
-              child: Text('Cancel'),
+              child: Text('Hủy'),
             ),
           ],
         );
@@ -48,7 +48,7 @@ class Logout extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () => _showLogoutDialog(context),
-      child: Text('Logout'),
+      child: Text('Đăng xuất'),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_application_1/home_page/home_view/Alert.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,20 +34,42 @@ class _AddPdfViewerState extends State<AddPdfViewer> {
       try {
         final streamedResponse = await request.send();
         if (streamedResponse.statusCode == 200) {
-          // Xử lý thành công, có thể hiển thị thông báo thành công
           print('PDF uploaded successfully!');
-        } else {
-          // Xử lý lỗi, có thể hiển thị thông báo lỗi
-          print(
-              'Failed to upload PDF. Error code: ${streamedResponse.statusCode}');
+          showNotificationDialog(
+            context,
+            title: "Success",
+            message: "File PDF đã được tải lên thành công",
+            isSuccess: true,
+          );
+        }
+        if (streamedResponse.statusCode != 200) {
+          print('Tải lên thất bại . mã lỗi: ${streamedResponse.statusCode}');
+          showNotificationDialog(
+            context,
+            title: "Failure",
+            message: "Tải lên thất bại. mã lỗi: ${streamedResponse.statusCode}",
+            isSuccess: false,
+          );
         }
       } catch (e) {
-        // Xử lý lỗi mạng hoặc lỗi khác
+        // Error uploading PDF, show error message
         print('Error uploading PDF: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Lỗi khi tải : $e'),
+            duration: Duration(seconds: 3),
+          ),
+        );
       }
     } else {
-      // Xử lý khi không có file được chọn
+      // No PDF selected, show message
       print('No PDF selected');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Khồng có PDF được chọn'),
+          duration: Duration(seconds: 3),
+        ),
+      );
     }
   }
 
@@ -55,7 +78,7 @@ class _AddPdfViewerState extends State<AddPdfViewer> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Upload PDF',
+          'Thêm file PDF',
           style: TextStyle(
             color: Colors.black,
             fontSize: 25, // Đặt kích thước chữ là 20
@@ -243,9 +266,10 @@ class _AddPdfViewerState extends State<AddPdfViewer> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.purple, // Đây là nơi bạn đặt màu cho nút (màu tím là Colors.purple)
+                        primary: Colors
+                            .purple, // Đây là nơi bạn đặt màu cho nút (màu tím là Colors.purple)
                       ),
-                      child: Text('Upload PDF'),
+                      child: Text('Tải lên'),
                     ),
                   ],
                 ),

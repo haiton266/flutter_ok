@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/home_page/home_view/Alert.dart';
 import 'package:flutter_application_1/login/views/LoginPage.dart';
 import 'package:flutter_application_1/sigup/controllers/SigupControlers.dart';
 import 'package:flutter_application_1/sigup/models/models.dart';
@@ -25,11 +26,18 @@ class _SignUpPageState extends State<SignUpPage> {
     return emailValid;
   }
 
+  bool isVietnamesePhoneNumber(String number) {
+    // Kiểm tra số điện thoại có bắt đầu bằng +84 hoặc 0 và có 10 hoặc 11 chữ số
+    RegExp regExp =
+        RegExp(r'(^\+84[1-9]\d{8}$)|(^(09|03|07|08|05)+([0-9]{8})$)');
+    return regExp.hasMatch(number);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign Up'),
+        title: Text('Đăng ký'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -45,7 +53,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a username';
+                    return 'Vui lòng nhập tên đăng nhập';
                   }
                   return null;
                 },
@@ -54,7 +62,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 obscureText: _isObscure,
                 controller: _passwordController,
                 decoration: InputDecoration(
-                  labelText: 'Password',
+                  labelText: 'Mật khẩu',
                   prefixIcon: Icon(Icons.lock),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -69,7 +77,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a password';
+                    return 'Vui lòng nhập mật khẩu';
                   }
                   return null;
                 },
@@ -82,10 +90,10 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter an email';
+                    return 'Vui lòng nhập địa chỉ email';
                   }
                   if (!isEmailValid(value)) {
-                    return 'Please enter a valid email';
+                    return 'Vui lòng nhập đúng email';
                   }
                   return null;
                 },
@@ -93,12 +101,12 @@ class _SignUpPageState extends State<SignUpPage> {
               TextFormField(
                 controller: _addressController,
                 decoration: InputDecoration(
-                  labelText: 'Address',
+                  labelText: 'Địa chỉ',
                   prefixIcon: Icon(Icons.home),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter an address';
+                    return 'Vui lòng nhập địa chỉ';
                   }
                   return null;
                 },
@@ -106,12 +114,14 @@ class _SignUpPageState extends State<SignUpPage> {
               TextFormField(
                 controller: _phoneController,
                 decoration: InputDecoration(
-                  labelText: 'Phone',
+                  labelText: 'Số điện thoại',
                   prefixIcon: Icon(Icons.phone),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a phone number';
+                    return 'Vui lòng nhập số điện thoai';
+                  } else if (!isVietnamesePhoneNumber(value)) {
+                    return 'Nhập đúng định dạng số điện thoại';
                   }
                   return null;
                 },
@@ -131,32 +141,25 @@ class _SignUpPageState extends State<SignUpPage> {
                     bool signUpSuccess = await controller.registerUser(user);
 
                     if (signUpSuccess) {
-                      // If sign-up is successful, navigate to login page
-                      Navigator.pushReplacement(
+                      // If sign-up is successful
+                      showNotificationDialog(
                         context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        title: "Thành công",
+                        message: "Đăng ký thành công.",
+                        isSuccess: true,
                       );
                     } else {
-                      // If sign-up fails, display a dialog to the user.
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('Sign Up Failed'),
-                          content: Text('Please try again.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text('OK'),
-                            ),
-                          ],
-                        ),
+                      // If sign-up fails
+                      showNotificationDialog(
+                        context,
+                        title: "Đăng ký thất bại",
+                        message: "Vui lòng thử lại .",
+                        isSuccess: false,
                       );
                     }
                   }
                 },
-                child: Text('Sign Up'),
+                child: Text('Đăng ký'),
               ),
             ],
           ),
